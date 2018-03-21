@@ -4,8 +4,8 @@ Serves as the root repository to store all project related information.
 Project Roles
 ==================================================================
 Clayton Townley: Project Manager
-Brent Silvernagel: @todo
-Joshua Thomas: Testing
+Brent Silvernagel: Test
+Joshua Thomas: @todo
 Deborah Snyder: @todo 
 
 Git Cheatsheet

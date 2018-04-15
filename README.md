@@ -3,15 +3,12 @@ Serves as the root repository to store all project related information.
 
 Project Roles
 ==================================================================
-Clayton Townley: Project Manager
-Brent Silvernagel: Test
-Joshua Thomas: @todo
-Deborah Snyder: @todo 
+Clayton Townley: Web Application Front End Development
+Brent Silvernagel: Test, Integration, and User Manual Development 
+Joshua Thomas: Database Management Development
+Deborah Snyder: Business Logic Development
 
-Git Cheatsheet
+Deployment
 ==================================================================
-https://confluence.atlassian.com/bitbucketserver/basic-git-commands-776639767.html
-
-Git Tutorial
-==================================================================
-https://guides.github.com/activities/hello-world/
+This project is currently deployed on:
+https://meeting-tracker.herokuapp.com/

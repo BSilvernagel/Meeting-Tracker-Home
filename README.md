@@ -4,8 +4,11 @@ Serves as the root repository to store all project related information.
 Project Roles
 ==================================================================
 Clayton Townley: Web Application Front End Development
-Brent Silvernagel: Test, Integration, and User Manual Development 
+
+Brent Silvernagel: Test, Integration, and User Manual Development
+
 Joshua Thomas: Database Management Development
+
 Deborah Snyder: Business Logic Development
 
 Deployment

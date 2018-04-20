@@ -57,13 +57,13 @@ public class Main {
   String index() {
     return "index";
   }
-
-  @RequestMapping("/hello")
-  String hello(Map<String, Object> model) {
-    RelativisticModel.select();
-    Amount<Mass> m = Amount.valueOf("12 GeV").to(KILOGRAM);
-    model.put("science", "E=mc^2: 12 GeV = " + m.toString());
-    return "hello";
+  
+  @RequestMapping("/result")
+  String result(Map<String, Object> model) {
+	  String cost = "";
+	  cost = "$5000";
+	  model.put("meetingResult", "Your meetings will cost " + cost);
+    return "result";
   }
 
   @RequestMapping("/db")

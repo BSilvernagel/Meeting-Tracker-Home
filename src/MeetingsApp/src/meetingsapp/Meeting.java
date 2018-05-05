@@ -1,4 +1,4 @@
-package meetingsapp;
+import java.util.ArrayList;
 
 /**
  * @class: Meeting
@@ -10,14 +10,14 @@ package meetingsapp;
 public class Meeting 
 {
     //class variable definition
+    ArrayList <Person> meetingAttendees;
     double meetingDuration;
     double meetingFrequency;
     double numberOfAttendees;
     double attendeePayGrade;
-    //stores the total meeting time per person
+    String timeScale;
     double totalMeetTime;
     double meetingCost;
-    String timeScale;
     
     /************************************************************************
      * Meeting class
@@ -50,13 +50,11 @@ public class Meeting
      * values at object creation.
      * ***********************************************************************
      */
-    public Meeting(double duration, double freq, double numAttend, 
-            double payGrade, String tScale)
+    public Meeting(double duration, double freq, ArrayList<Person> attendees, String tScale)
     {
         meetingDuration = duration;
         meetingFrequency = freq;
-        numberOfAttendees = numAttend;
-        attendeePayGrade = payGrade;
+        meetingAttendees = attendees;
         timeScale = tScale;
     }
     
@@ -195,11 +193,13 @@ public class Meeting
         {
             //calculate total meeting time in minutes
             calcMeetingTime();
-
-            //get hourly rate
-            hourlyRate = (attendeePayGrade / 2080);
-            //calculate total cost of meeting for all attendees
-            calcCost = (totalMeetTime/60) * hourlyRate * numberOfAttendees;
+            
+            for (int i = 0; i< meetingAttendees.size(); i++) {
+            	//get hourly rate
+            	hourlyRate = (meetingAttendees.get(i).getSalary()/ 2080);
+            	//calculate total cost of meeting for all attendees
+            	calcCost += (totalMeetTime/60) * hourlyRate;
+            }
         }
         else
             System.out.println("Data was invalid! Must enter non-zero values for all fields");

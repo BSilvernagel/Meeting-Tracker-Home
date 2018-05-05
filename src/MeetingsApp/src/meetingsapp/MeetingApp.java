@@ -10,15 +10,17 @@
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 
 
-public class MeetingApp extends JFrame implements ActionListener {
+public class MeetingApp extends JFrame {
 	/**
 	 * 
 	 */
@@ -38,8 +40,8 @@ public class MeetingApp extends JFrame implements ActionListener {
   	public static JButton govLink = new JButton("Look Up Government Salary Rates");
   	public static JButton conLink = new JButton("Look Up Contractor Salary Rates");
   	public static JLabel meetingSalary = new JLabel("Annual Salary:");
-  	public static Double[] salaries = { 25000.00, 50000.00, 75000.00};
-  	public static JComboBox<Double> typicalSalary = new JComboBox<Double>(salaries);
+//  	public static Double[] salaries = { 25000.00, 50000.00, 75000.00};
+  	public static JTextField typicalSalary = new JTextField("Enter Annual Salary");
   	public static JLabel meetingScale = new JLabel("Calculate over how long?");
   	public static String[] scales = { "One Meeting", "One Week", "One Month", "One Year"};
   	public static JComboBox<String> timeScale = new JComboBox<String>(scales);
@@ -162,19 +164,25 @@ public class MeetingApp extends JFrame implements ActionListener {
     		try {
     			openWebpage(new URL("http://www.google.com"));
     		} catch (MalformedURLException e) {
-    			JOptionPane.showMessageDialog(null, "Unable to open link");			}
+    			webPageError();			}
     	}
     	
     	private void govLink() {
     		try {
     			openWebpage(new URL("http://www.google.com"));
     		} catch (MalformedURLException e) {
-    			JOptionPane.showMessageDialog(null, "Unable to open link");			}
+    			webPageError();			}
     	}
 
 		private void addAttendee() {
-			//TODO new person object, construct it
-			meetingAttendees.add(new Person(userInput.getText(), 500));
+			double salary = 0.0;
+			try {
+				salary =Double.parseDouble(typicalSalary.getText());
+			} catch (NumberFormatException f) {
+				f.printStackTrace();
+		    // handle the error
+			}
+			meetingAttendees.add(new Person(userInput.getText(), salary));
 			updateAttendeeDisplay();
 			JOptionPane.showMessageDialog(null, "Attendee added");
 		}
@@ -197,83 +205,63 @@ public class MeetingApp extends JFrame implements ActionListener {
     	}
     
     	private void calculateTotal() {
-    		Meeting test = new Meeting();
     		double duration = 0.0;
-    		double attend = 0.0;
-    		double days = 0.0;
-    		double salary = 0.0;
+    		double frequency = 0.0;
+    		String tScale = ""; 
+    		//Set duration
+			try {
+				duration =Double.parseDouble(userDuration.getText());
+			} catch (NumberFormatException f) {
+				f.printStackTrace();
+		    // handle the error
+			}
+
+			//Set frequency
+			frequency = daysOfWeek[perWeek.getSelectedIndex()];
+			
+			//Set timescale
+			tScale = scales[timeScale.getSelectedIndex()];
     		
-    		try {
-    			duration =Double.parseDouble(userDuration.getText());
-    		} catch (NumberFormatException f) {
-    		    f.printStackTrace();
-    		    // handle the error
-    		}
-    		
-    		days = daysOfWeek[perWeek.getSelectedIndex()];
-    		
-    		salary = salaries[typicalSalary.getSelectedIndex()];
-    		
-    		test.setInfo(duration, days, attend, salary);
-    		test.setTimeScale(scales[timeScale.getSelectedIndex()]);
-    		test.calcMeetingTime();
-    		calculatorResponse.setText(" " + test.calcPay());
+			Meeting test2 = new Meeting(duration, frequency, meetingAttendees, tScale);
+    				
+    		test2.calcCostPerMeeting();
+    		JOptionPane.showMessageDialog(null, test2.toString());
     		
 		}
 
 
 		private void export() {
-
-		}
-		private static boolean openWebpage(URI uri) {
-		    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-		    if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-		        try {
-		            desktop.browse(uri);
-		            return true;
-		        } catch (Exception e) {
-		            e.printStackTrace();
-		        }
+		    JFileChooser fileChooser = new JFileChooser();
+		    int retval = fileChooser.showSaveDialog(this);
+		    if (retval == JFileChooser.APPROVE_OPTION) {
+		      File file = fileChooser.getSelectedFile();
+		      if (file == null) {
+		        return;
+		      }
+		      if (!file.getName().toLowerCase().endsWith(".txt")) {
+		        file = new File(file.getParentFile(), file.getName() + ".txt");
+		      }
+		      try {
+		    	  attendeeTextArea.write(new OutputStreamWriter(new FileOutputStream(file),
+		            "utf-8"));
+		        Desktop.getDesktop().open(file);
+		      } catch (Exception e) {
+		        e.printStackTrace();
+		      }
 		    }
-		    return false;
 		}
 
 		private static boolean openWebpage(URL url) {
-		    try {
-		        return openWebpage(url.toURI());
-		    } catch (URISyntaxException e) {
-		        e.printStackTrace();
-		    }
+			try {
+				Desktop.getDesktop().browse(url.toURI());
+			} catch (IOException e) {
+				webPageError();
+			} catch (URISyntaxException e) {
+				webPageError();
+			}
 		    return false;
 		}
 
-		public void actionPerformed(ActionEvent e) {
-    		// Takes user input and responds with a Hello.
-    		//todo add constructor
-    		Meeting test = new Meeting();
-    		double duration = 0.0;
-    		double attend = 0.0;
-    		double days = 0.0;
-    		double salary = 0.0;
-    		
-    		try {
-    			duration =Double.parseDouble(userDuration.getText());
-    		} catch (NumberFormatException f) {
-    		    f.printStackTrace();
-    		    // handle the error
-    		}
-    		
-    		days = daysOfWeek[perWeek.getSelectedIndex()];
-    		
-    		salary = salaries[typicalSalary.getSelectedIndex()];
-    		
-    		test.setInfo(duration, days, attend, salary);
-    		test.setTimeScale(scales[timeScale.getSelectedIndex()]);
-    		test.calcMeetingTime();
-    		calculatorResponse.setText(" " + test.calcPay());
-    		
-    	} 
-    
 	
     	// Method that makes GUI visible          
     	public void ShowGUI() {
@@ -284,6 +272,9 @@ public class MeetingApp extends JFrame implements ActionListener {
     	// Main Method
     	public static void main(String args[]) {
     	new MeetingApp().ShowGUI();
+    	}
+    	private static void webPageError() {
+    		JOptionPane.showMessageDialog(null, "Unable to open link");
     	}
 	    
 }

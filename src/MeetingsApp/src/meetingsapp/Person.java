@@ -1,4 +1,5 @@
-
+import java.text.NumberFormat;
+import java.util.Locale;
 
 public class Person {
 	
@@ -13,15 +14,18 @@ public class Person {
      * values at object creation.
      * ***********************************************************************
      */
-	public Person(String attendee, int salary) {
+	public Person(String attendee, double salary) {
 		this.attendee = attendee;
 		this.salary = salary;
 	}
 
 	//@override
 	public String toString() {
-		String s = "";
-		s += attendee +"\t"+ "$"+Double.toString(this.salary);		
+    	Locale locale = new Locale("en", "US");      
+    	NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(locale);
+		
+    	String s = "";
+		s += attendee +"\t"+ currencyFormatter.format(this.salary);		
 		return s;
 	}
 	

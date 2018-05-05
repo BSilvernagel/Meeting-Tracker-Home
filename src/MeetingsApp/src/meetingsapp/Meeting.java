@@ -1,4 +1,6 @@
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 /**
  * @class: Meeting
@@ -13,8 +15,6 @@ public class Meeting
     ArrayList <Person> meetingAttendees;
     double meetingDuration;
     double meetingFrequency;
-    double numberOfAttendees;
-    double attendeePayGrade;
     String timeScale;
     double totalMeetTime;
     double meetingCost;
@@ -31,19 +31,13 @@ public class Meeting
     {
         meetingDuration = 0.0;
         meetingFrequency = 0.0;
-        numberOfAttendees = 0.0;
-        attendeePayGrade = 0.0;
         totalMeetTime = 0.0;
-        meetingCost = 0.0;
-        timeScale = "";
     }
     
     /************************************************************************
      * Meeting class
      * @param duration: meeting duration in minutes.
      * @param freq: number of meetings per week.
-     * @param numAttend: number of attendees at the meeting.
-     * @param payGrade: pay grade of attendees in dollars.
      * @param tScale: String value for time scale (meeting, week, month, year)
      * paramOut list; none.
      * Description: Overload constructor. Sets all the class variables to specified
@@ -114,12 +108,10 @@ public class Meeting
      * frequency, number of attendees and pay grade.
      * ***********************************************************************
      */
-    public void setInfo(double duration, double freq, double numAttend, double pGrade)
+    public void setInfo(double duration, double freq)
     {
         meetingDuration = duration;
         meetingFrequency = freq;
-        numberOfAttendees = numAttend;
-        attendeePayGrade = pGrade;
     }
     
     /************************************************************************
@@ -133,84 +125,76 @@ public class Meeting
     public double [] getInfo()
     {   
         double[] info;
-        info = new double[4];
+        info = new double[2];
         info[0] = meetingDuration;
         info[1] = meetingFrequency;
-        info[2] = numberOfAttendees;
-        info[3] = attendeePayGrade;
         
         return info;
     }
     
+//    /************************************************************************
+//     * calcMeetingTime
+//     * paramIn none.
+//     * paramOut none.
+//     * Description: This function calculates the total time of meetings entered
+//     * by the user based on the meeting frequency and time scale. The time is
+//     * calculated as the total time in minutes.
+//     * ***********************************************************************
+//     */
+//    public void calcMeetingTime()
+//    {
+//        switch (timeScale) {
+//            case "One Meeting":
+//                totalMeetTime = meetingDuration * 1;
+//                break;
+//            case "One Week":
+//                totalMeetTime = meetingDuration * meetingFrequency;
+//                break;
+//            case "One Month":
+//                //assuming 52 week work year.
+//                totalMeetTime = meetingDuration * meetingFrequency * (52/12);
+//                break;
+//            case "One Year":
+//                totalMeetTime = meetingDuration * meetingFrequency * 52;
+//                break;
+//            default:
+//                //place holder for error handling should user not enter time scale value
+//                System.out.println("No time scale value entered");
+//                break;
+//        }
+//      
+//    }
     /************************************************************************
-     * calcMeetingTime
+     * calcCostPerMeeting
      * paramIn none.
      * paramOut none.
-     * Description: This function calculates the total time of meetings entered
-     * by the user based on the meeting frequency and time scale. The time is
-     * calculated as the total time in minutes.
-     * ***********************************************************************
-     */
-    public void calcMeetingTime()
-    {
-        switch (timeScale) {
-            case "One Meeting":
-                totalMeetTime = meetingDuration * 1;
-                break;
-            case "One Week":
-                totalMeetTime = meetingDuration * meetingFrequency;
-                break;
-            case "One Month":
-                //assuming 52 week work year.
-                totalMeetTime = meetingDuration * meetingFrequency * (52/12);
-                break;
-            case "One Year":
-                totalMeetTime = meetingDuration * meetingFrequency * 52;
-                break;
-            default:
-                //place holder for error handling should user not enter time scale value
-                System.out.println("No time scale value entered");
-                break;
-        }
-      
-    }
-    /************************************************************************
-     * calcPay
-     * paramIn none.
-     * @return cost: returns total cost of meetings.
-     * Description: This function calculates total cost of the meetings based
+     * Description: This function calculates total cost of a single meeting based
      * on the user input for all attendees. 
      * ***********************************************************************
      */
-    public double calcPay()
+    public void calcCostPerMeeting()
     {       
-        //local variables for returning calculated pay and calculating hourly rate
-        double calcCost = 0.0;
+        //local variable for hourly rate
         double hourlyRate;
         
+        //reset meetingCost
+        meetingCost = 0.0;
+        
         //verify data is valid prior to performing calculation.
-        if(validateInfo())
-        {
-            //calculate total meeting time in minutes
-            calcMeetingTime();
-            
+        if(validateInfo()) {
             for (int i = 0; i< meetingAttendees.size(); i++) {
             	//get hourly rate
             	hourlyRate = (meetingAttendees.get(i).getSalary()/ 2080);
-            	//calculate total cost of meeting for all attendees
-            	calcCost += (totalMeetTime/60) * hourlyRate;
+            	//calculate total cost of meeting for each attendee
+            	meetingCost += meetingDuration/60 * hourlyRate;
             }
         }
-        else
-            System.out.println("Data was invalid! Must enter non-zero values for all fields");
-        
-        //drop decimal values
-        int cost = (int) calcCost;
-        
-        return cost;
+        else {
+        	System.out.println("Data was invalid! Must enter non-zero values for all fields");        	
+        }
     }
     
-    public boolean validateInfo()
+    private boolean validateInfo()
     {
         double[] info = getInfo();
         //verify all values are valid
@@ -225,5 +209,40 @@ public class Meeting
             return false;
         
         return true;
+    }
+    /************************************************************************
+     * toString
+     * paramIn none.
+     * paramOut none.
+     * Description: This outputs a string formatted to give a message to the user.
+     * ***********************************************************************
+     */
+    
+    //@override
+    public String toString(){
+    	
+    	String result = "";
+    	double singleMeetingCost = 0.0;
+    	double weeklyMeetingCost = 0.0;
+    	double monthlyMeetingCost = 0.0;
+    	double yearlyMeetingCost = 0.0;
+    	
+    	singleMeetingCost = meetingCost;
+    	weeklyMeetingCost =  meetingFrequency* meetingCost;
+    	monthlyMeetingCost =  meetingFrequency * (52/12)* meetingCost; //assuming 52 week work year.
+    	yearlyMeetingCost = meetingFrequency * 52* meetingCost; 
+    	
+    	Locale locale = new Locale("en", "US");      
+    	NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(locale);
+    	
+    	result = "Single Meeting Cost\n";
+    	result += currencyFormatter.format(singleMeetingCost)+ "\n";
+    	result += "Weekly Meeting Cost\n";
+    	result += currencyFormatter.format(weeklyMeetingCost)+ "\n";
+    	result += "Monthly Meeting Cost\n";
+    	result += currencyFormatter.format(monthlyMeetingCost)+ "\n";
+    	result += "Yearly Meeting Cost\n";
+    	result += currencyFormatter.format(yearlyMeetingCost) + "\n";
+    	return result;
     }
 }

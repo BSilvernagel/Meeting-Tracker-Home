@@ -162,14 +162,14 @@ public class MeetingApp extends JFrame {
     	
     	private void conLink() {
     		try {
-    			openWebpage(new URL("http://www.google.com"));
+    			openWebpage(new URL("https://www.glassdoor.com/Contractors-Salary/Washington-DC-Government-Contractor-Salary-E346732.htm"));
     		} catch (MalformedURLException e) {
     			webPageError();			}
     	}
     	
     	private void govLink() {
     		try {
-    			openWebpage(new URL("http://www.google.com"));
+    			openWebpage(new URL("https://www.opm.gov/policy-data-oversight/pay-leave/salaries-wages/salary-tables/pdf/2018/DCB.pdf"));
     		} catch (MalformedURLException e) {
     			webPageError();			}
     	}

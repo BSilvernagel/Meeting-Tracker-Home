@@ -10,6 +10,8 @@
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -18,6 +20,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 
 public class MeetingApp extends JFrame {
@@ -151,7 +154,27 @@ public class MeetingApp extends JFrame {
     		removeButton.addActionListener (e -> removeAttendee());
     		submitButton.addActionListener (e -> calculateTotal());
     		exportButton.addActionListener (e -> export());
+    		    		
     		
+    		//Add MouseListeners
+    		userInput.addMouseListener(new MouseAdapter(){
+                @Override
+                public void mouseClicked(MouseEvent e){
+                    userInput.setText("");
+                }
+            });
+    		typicalSalary.addMouseListener(new MouseAdapter(){
+                @Override
+                public void mouseClicked(MouseEvent e){
+                	typicalSalary.setText("");
+                }
+            });
+    		userDuration.addMouseListener(new MouseAdapter(){
+                @Override
+                public void mouseClicked(MouseEvent e){
+                	userDuration.setText("");
+                }
+            });
     		
     		//Blank label to keep grid border the right size
     		JLabel blank = new JLabel("              ");
@@ -177,12 +200,19 @@ public class MeetingApp extends JFrame {
 		private void addAttendee() {
 			double salary = 0.0;
 			try {
-				salary =Double.parseDouble(typicalSalary.getText());
+				salary =Double.parseDouble(typicalSalary.getText().replace(",", ""));
 			} catch (NumberFormatException f) {
 				f.printStackTrace();
 		    // handle the error
+			}			if(userInput.getText().contains("Enter Name"))
+			{
+				JOptionPane.showMessageDialog(null, "Attendee name must be entered.");
+				return;
 			}
-			meetingAttendees.add(new Person(userInput.getText(), salary));
+			else
+			{
+				meetingAttendees.add(new Person(userInput.getText(), salary));
+			}
 			updateAttendeeDisplay();
 			JOptionPane.showMessageDialog(null, "Attendee added");
 		}
@@ -198,8 +228,16 @@ public class MeetingApp extends JFrame {
 		}
 
 		private void removeAttendee() {
+			String selectedText = attendeeTextArea.getSelectedText().trim();
 			if (meetingAttendees.size()>0) {
-			meetingAttendees.remove(meetingAttendees.size()-1);
+				for(Iterator<Person> iterator = meetingAttendees.iterator(); iterator.hasNext();)
+				{
+					Person person = iterator.next();
+					if(person.getAttendee().contains(selectedText))
+					{
+						meetingAttendees.remove(person);
+					}
+				}
 			}
     		updateAttendeeDisplay();
     	}
@@ -211,6 +249,11 @@ public class MeetingApp extends JFrame {
     		//Set duration
 			try {
 				duration =Double.parseDouble(userDuration.getText());
+				if(duration < 0 )
+				{
+					JOptionPane.showMessageDialog(null, "Duration cannot be negative!");
+					return;
+				}
 			} catch (NumberFormatException f) {
 				f.printStackTrace();
 		    // handle the error

@@ -33,4 +33,8 @@ public class Person {
 		return salary;
 	}
 
+	public String getAttendee()
+	{
+		return attendee;
+	}
 }
